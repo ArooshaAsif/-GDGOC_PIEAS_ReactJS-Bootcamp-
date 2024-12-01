@@ -12,11 +12,18 @@ const BooksProvider = ({ children }) => {
   const [borrowedBooks, setBorrowedBooks] = useState([]);
   const [favBooks, setFavBooks] = useState([]);
 
-  // Fetch data asynchronously from books.json
   useEffect(() => {
-    fetch('./books.json')
-      .then((response) => response.json())
-      .then((data) => setBooks(data))
+    fetch('/books.json')  // 
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Fetched books:", data);  // Debugging line
+        setBooks(data);
+      })
       .catch((error) => console.error('Error fetching books:', error));
   }, []);
 
@@ -68,10 +75,11 @@ const BookList = () => {
   return (
     <div>
       <h2>Available Books</h2>
-      
-       (
-        books.map((book) = <BookCard key={book.id} book={book} />)
-      )
+      {books.length === 0 ? (
+        <p>No books available</p>
+      ) : (
+        books.map((book) => <BookCard key={book.id} book={book} />)
+      )}
     </div>
   );
 };
